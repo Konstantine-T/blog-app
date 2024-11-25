@@ -3,13 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { UserContext } from "@/context/userContext";
 import { login } from "@/supabase/auth";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
+
+  const userContext = useContext(UserContext);
+
+  useEffect(() => {
+    if (localStorage.getItem("userToken")) {
+      navigate("/");
+    }
+  }, []);
 
   const [loginPayload, setLoginPayload] = useState({
     email: "",
@@ -19,15 +28,26 @@ export default function Login() {
   const { mutate: handleLogin } = useMutation({
     mutationKey: ["login"],
     mutationFn: login,
+    onSuccess: (res) => {
+      if (!res?.error) {
+        const token = res.data.session.access_token;
+        localStorage.setItem("userToken", token);
+
+        if (res.data.user?.email) {
+          userContext?.setUser({ email: res.data.user?.email });
+          navigate("/");
+          return;
+        }
+      }
+      console.error("something went wrong my man");
+    },
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("I work");
     if (loginPayload.email && loginPayload.password) {
       handleLogin(loginPayload);
-      console.log("logged in mother fucker");
-      navigate("/");
+      setLoginPayload({ email: "", password: "" });
     }
   };
 

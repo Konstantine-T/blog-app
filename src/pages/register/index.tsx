@@ -5,11 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { register } from "@/supabase/auth";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("userToken")) {
+      navigate("/");
+    }
+  }, []);
 
   const [registerPayload, setRegisterPayload] = useState({
     email: "",
@@ -25,7 +31,7 @@ const Register = () => {
     e.preventDefault();
     if (registerPayload.email && registerPayload.password) {
       handleRegister(registerPayload);
-      navigate("/");
+      navigate("/login");
     }
   };
   return (

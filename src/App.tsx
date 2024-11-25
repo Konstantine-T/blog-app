@@ -8,6 +8,7 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import { ThemeProvider } from "./components/theme/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Profile from "./pages/user-account";
 
 function App() {
   const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/write" element={<Write />}></Route>
                 <Route path="/login" element={<Login />}></Route>
                 <Route path="/register" element={<Register />}></Route>
+                <Route path="/profile" element={<Profile />}></Route>
               </Route>
             </Routes>
           </BrowserRouter>
