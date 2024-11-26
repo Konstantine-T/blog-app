@@ -6,24 +6,32 @@ import { Label } from "@/components/ui/label";
 import { UserContext } from "@/context/userContext";
 import { login } from "@/supabase/auth";
 import { useMutation } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const navigate = useNavigate();
 
   const userContext = useContext(UserContext);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<LoginFormInputs>();
+
   useEffect(() => {
     if (localStorage.getItem("userToken")) {
       navigate("/");
     }
   }, []);
-
-  const [loginPayload, setLoginPayload] = useState({
-    email: "",
-    password: "",
-  });
 
   const { mutate: handleLogin } = useMutation({
     mutationKey: ["login"],
@@ -43,12 +51,9 @@ export default function Login() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (loginPayload.email && loginPayload.password) {
-      handleLogin(loginPayload);
-      setLoginPayload({ email: "", password: "" });
-    }
+  const onSubmit = (data: LoginFormInputs) => {
+    handleLogin(data);
+    reset();
   };
 
   return (
@@ -63,37 +68,32 @@ export default function Login() {
           </div>
         </div>
         <div className="p-6 pt-0">
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 type="email"
                 id="email"
                 placeholder="john@example.com"
-                required
-                value={loginPayload.email}
-                onChange={(e) => {
-                  setLoginPayload({
-                    email: e.target.value,
-                    password: loginPayload.password,
-                  });
-                }}
+                {...register("email", { required: "Email is required" })}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
                 type="password"
                 id="password"
-                required
-                value={loginPayload.password}
-                onChange={(e) => {
-                  setLoginPayload({
-                    email: loginPayload.email,
-                    password: e.target.value,
-                  });
-                }}
+                placeholder="********"
+                {...register("password", { required: "Password is required" })}
               />
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
             <Button type="submit" className="w-full">
               Log In
