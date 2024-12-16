@@ -7,16 +7,17 @@ import {
 } from "../ui/card";
 
 type BlogCardProps = {
-  heading: string;
-  author: string;
-  date: string;
-  readingTime: string;
-  previewText: string;
-  text: string;
-  tags: string[];
+  description_en: string | null;
+  description_ka: string | null;
+  id: number;
+  image_url: string | null;
+  title_en: string | null;
+  title_ka: string | null;
+  user_id: string | null;
 };
 
 const BlogCard: React.FC<BlogCardProps> = (props) => {
+  console.log(props, "sdsaas");
   return (
     <Card className="rounded-xl border bg-card text-card-foreground shadow w-4/5 m-auto	mt-5">
       <CardHeader className="p-0">
@@ -28,20 +29,16 @@ const BlogCard: React.FC<BlogCardProps> = (props) => {
       </CardHeader>
 
       <CardContent className="flex flex-col space-y-2 p-6">
-        <CardTitle className="text-2xl font-bold">{props.heading}</CardTitle>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+        <CardTitle className="text-2xl font-bold">{props.title_en}</CardTitle>
+        {/* <div className="flex items-center space-x-2 text-sm text-muted-foreground">
           <a href="/author/1" className="hover:underline">
             {props.author}
           </a>
-          <span>•</span>
-          <span>{props.date}</span>
-          <span>•</span>
-          <span>{props.readingTime}</span>
-        </div>
-        <p className="text-muted-foreground">{props.previewText}</p>
+        </div> */}
+        <p className="text-muted-foreground">{props.description_en}</p>
       </CardContent>
 
-      <CardFooter className="flex items-center p-6 pt-0">
+      {/* <CardFooter className="flex items-center p-6 pt-0">
         <div className="flex space-x-2">
           {props.tags.map((tag) => (
             <a key={tag} href="/search">
@@ -51,7 +48,7 @@ const BlogCard: React.FC<BlogCardProps> = (props) => {
             </a>
           ))}
         </div>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 };

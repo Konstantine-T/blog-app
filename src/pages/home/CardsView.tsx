@@ -5,16 +5,17 @@ type CardsViewProps = {
 };
 
 type ArticleInfo = {
-  heading: string;
-  author: string;
-  date: string;
-  readingTime: string;
-  previewText: string;
-  text: string;
-  tags: string[];
+  description_en: string | null;
+  description_ka: string | null;
+  id: number;
+  image_url: string | null;
+  title_en: string | null;
+  title_ka: string | null;
+  user_id: string | null;
 };
 
 const CardsView: React.FC<CardsViewProps> = ({ articles }) => {
+  console.log(articles);
   return (
     <div>
       {articles.map((article: ArticleInfo, index: number) => (
