@@ -15,7 +15,6 @@ type ArticleInfo = {
 };
 
 const CardsView: React.FC<CardsViewProps> = ({ articles }) => {
-  console.log(articles);
   return (
     <div>
       {articles.map((article: ArticleInfo, index: number) => (

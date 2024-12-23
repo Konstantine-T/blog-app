@@ -1,45 +1,41 @@
 import SideField from "./SideField";
 import CardsView from "./CardsView";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getAllBlogs } from "@/supabase/blogs";
-
-type blogData = {
-  description_en: string | null;
-  description_ka: string | null;
-  id: number;
-  image_url: string | null;
-  title_en: string | null;
-  title_ka: string | null;
-  user_id: string | null;
-}[];
+import { useQuery } from "@tanstack/react-query";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [blogs, setBlogs] = useState<blogData>([]); // State to hold blogs data
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!localStorage.getItem("userToken")) {
       navigate("/login");
-      return;
     }
-    const fetchBlogs = async () => {
-      setLoading(true);
-      const data = await getAllBlogs();
-      if (data) {
-        setBlogs(data);
-      }
-      setLoading(false);
-    };
+  }, [navigate]);
 
-    fetchBlogs();
-  }, []);
+  const {
+    data: blogs,
+    isLoading,
+    isError,
+  } = useQuery(["blogs"], getAllBlogs, {
+    retry: 2,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (isError) {
+    return <p>Error loading blogs. Please try again later.</p>;
+  }
+
   return (
     <>
       <div className="flex items-start space-x-6 mt-20 mx-0 max-w-7xl">
         <section className="w-[70%]">
-          {loading ? <p>Loading blogs...</p> : <CardsView articles={blogs} />}
+          {isLoading ? (
+            <p>Loading blogs...</p>
+          ) : (
+            <CardsView articles={blogs || []} />
+          )}
         </section>
         <aside className="w-[40%]">
           <SideField />
