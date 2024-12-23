@@ -2,8 +2,7 @@ import SideField from "./SideField";
 import CardsView from "./CardsView";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { getAllBlogs } from "@/supabase/blogs";
-import { useQuery } from "@tanstack/react-query";
+import { useBlogs } from "@/hooks/useBlogs";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -14,14 +13,7 @@ const HomePage = () => {
     }
   }, [navigate]);
 
-  const {
-    data: blogs,
-    isLoading,
-    isError,
-  } = useQuery(["blogs"], getAllBlogs, {
-    retry: 2,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: blogs, isLoading, isError } = useBlogs();
 
   if (isError) {
     return <p>Error loading blogs. Please try again later.</p>;

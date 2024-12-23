@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { register } from "@/supabase/auth";
-import { useMutation } from "@tanstack/react-query";
+import useRegister from "@/hooks/useRegister";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -31,10 +30,7 @@ const Register = () => {
     formState: { errors },
   } = useForm<RegisterFormInputs>();
 
-  const { mutate: handleRegister } = useMutation({
-    mutationKey: ["register"],
-    mutationFn: register,
-  });
+  const { mutate: handleRegister } = useRegister();
 
   const onSubmit = (data: RegisterFormInputs) => {
     if (data.password !== data.confirmPassword) {

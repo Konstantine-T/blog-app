@@ -3,10 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserContext } from "@/context/userContext";
-import { login } from "@/supabase/auth";
-import { useMutation } from "@tanstack/react-query";
-import { useContext, useEffect } from "react";
+import { useLogin } from "@/hooks/useLogin";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +16,7 @@ interface LoginFormInputs {
 export default function Login() {
   const navigate = useNavigate();
 
-  const userContext = useContext(UserContext);
+  const { mutate: handleLogin } = useLogin();
 
   const {
     register,
@@ -31,25 +29,7 @@ export default function Login() {
     if (localStorage.getItem("userToken")) {
       navigate("/");
     }
-  }, []);
-
-  const { mutate: handleLogin } = useMutation({
-    mutationKey: ["login"],
-    mutationFn: login,
-    onSuccess: (res) => {
-      if (!res?.error) {
-        const token = res.data.session.access_token;
-        localStorage.setItem("userToken", token);
-
-        if (res.data.user?.email) {
-          userContext?.setUser({ email: res.data.user?.email });
-          navigate("/");
-          return;
-        }
-      }
-      console.error("something went wrong my man");
-    },
-  });
+  }, [navigate]);
 
   const onSubmit = (data: LoginFormInputs) => {
     handleLogin(data);
